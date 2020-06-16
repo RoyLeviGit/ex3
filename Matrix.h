@@ -201,7 +201,7 @@ namespace mtm {
     Matrix<T>& Matrix<T>::operator=(const Matrix<T>& matrix) {
         // error checking
         if (dimensions != matrix.dimensions) {
-            throw DimensionMismatch(width(), height(), matrix.width(), matrix.height());
+            throw DimensionMismatch(height(), width(), matrix.height(), matrix.width());
         }
 
         for (int i = 0 ; i < size() ; i++) {
@@ -217,7 +217,7 @@ namespace mtm {
     Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& matrix) {
         // error checking
         if (dimensions != matrix.dimensions) {
-            throw DimensionMismatch(width(), height(), matrix.width(), matrix.height());
+            throw DimensionMismatch(height(), width(), matrix.height(), matrix.width());
         }
 
         for (int i = 0; i < size() ; i++) {
@@ -272,9 +272,11 @@ namespace mtm {
     template <class T>
     Matrix<bool> Matrix<T>::operator!=(T t) const {
         Matrix<bool> diffMatrix(dimensions, false);
-        for (Matrix<bool>::iterator it = diffMatrix.begin(); it != diffMatrix.end() ; ++it) {
-            if (*it != t) {
-                *it = true;
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) {
+                if ((*this)(i,j) != t) {
+                    diffMatrix(i,j) = true;
+                }
             }
         }
         return diffMatrix;
@@ -294,9 +296,11 @@ namespace mtm {
     template <class T>
     Matrix<bool> Matrix<T>::operator<(T t) const {
         Matrix<bool> smallMatrix(dimensions, false);
-        for (Matrix<bool>::iterator it = smallMatrix.begin(); it != smallMatrix.end() ; ++it) {
-            if (*it < t) {
-                *it = true;
+        for (int i = 0; i < height(); ++i) {
+            for (int j = 0; j < width(); ++j) {
+                if ((*this)(i,j) < t) {
+                    smallMatrix(i,j) = true;
+                }
             }
         }
         return smallMatrix;
@@ -307,9 +311,11 @@ namespace mtm {
     template <class T>
     Matrix<bool> Matrix<T>::operator>(T t) const{
         Matrix<bool> bigMatrix(dimensions, false);
-        for (Matrix<bool>::iterator it = bigMatrix.begin(); it != bigMatrix.end() ; ++it) {
-            if (*it > t) {
-                *it = true;
+        for (int i = 0 ; i < height(); i++) {
+            for (int j = 0 ; j < width(); j++) {
+               if ((*this)(i,j) > t) {
+                   bigMatrix(i,j) = true;
+               } 
             }
         }
         return bigMatrix;
@@ -371,8 +377,8 @@ namespace mtm {
 
     template <class T>
     std::string Matrix<T>::DimensionMismatch::what() {
-        return "Mtm matrix error: Dimensions mismatch: (" 
-        + std::to_string(mat1_height) + "," + std::to_string(mat1_width) + ")("
+        return "Mtm matrix error: Dimension mismatch: (" 
+        + std::to_string(mat1_height) + "," + std::to_string(mat1_width) + ") ("
         + std::to_string(mat2_height) + "," + std::to_string(mat2_width) + ")";
     }
     
@@ -424,8 +430,8 @@ namespace mtm {
     template <class T>
     bool any(const Matrix<T> matrix) {
         for (T t : matrix) {
-            if (static_cast<bool>(t) == true) {
-                return false;
+            if (static_cast<bool>(t)) {
+                return true;
             }
         }
         return false;
