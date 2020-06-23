@@ -43,15 +43,15 @@ namespace mtm {
         const_iterator begin() const;
         const_iterator end() const;
         
-        class AccessIllegalElement {
+        class AccessIllegalElement : public Exception {
         public:
             std::string what();
         };
-        class IllegalInitialization {
+        class IllegalInitialization : public Exception {
         public:
             std::string what();
         };
-        class DimensionMismatch {
+        class DimensionMismatch : public Exception {
             int mat1_height;
             int mat1_width;
             int mat2_height;
