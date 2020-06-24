@@ -12,8 +12,10 @@ namespace mtm {
         GridPoint gridPoint;
         std::shared_ptr<Character> character;
         Cell();
+        Cell(const Cell& other);
         ~Cell();
         bool isCellEmpty() const;
+        void removeCharacter();
         std::string toString() const;
     };
     void moveChracter(Cell src_cell, Cell dst_cell);

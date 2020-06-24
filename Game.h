@@ -30,35 +30,35 @@ namespace mtm {
 
         class IllegalArgument : public Exception {
         public:
-            std::string what();
+            const char* what() const override;
         };
         class  IllegalCell : public Exception {
         public:
-            std::string what();
+            const char* what() const override;
         };
         class  CellEmpty : public Exception {
         public:
-            std::string what();
+            const char* what() const override;
         };
         class  CellOccupied : public Exception {
         public:
-            std::string what();
+            const char* what() const override;
         };
         class MoveTooFar : public Exception {
         public:    
-           std::string what(); 
+           const char* what() const override;
         };
         class OutOfRange : public Exception {
         public:    
-           std::string what(); 
+           const char* what() const override;
         };
-         class OutOfAmmo : public Exception {
+        class OutOfAmmo : public Exception {
         public:    
-           std::string what(); 
+           const char* what() const override;
         };
         class IllegalTarget : public Exception {
         public:    
-           std::string what(); 
+           const char* what() const override;
         };
     };
     std::ostream& operator<<(std::ostream& os, const Game& game);

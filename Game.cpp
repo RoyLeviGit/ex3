@@ -21,8 +21,7 @@ Game::Game(int height, int width): matrix(Dimensions(height,width)) {
 
 Game::~Game() {}
 
-Game::Game(const Game& other) : matrix(other.matrix) {
-}
+Game::Game(const Game& other) : matrix(other.matrix) {}
 
 void Game::addCharacter(const GridPoint& coordinates, std::shared_ptr<Character> character) {
     if(!isGridPointInBounds(coordinates)){
@@ -90,12 +89,17 @@ void Game::attack(const GridPoint & src_coordinates, const GridPoint & dst_coord
     }
     attacker->attackTarget(matrix(dst_coordinates.row, dst_coordinates.col).character);
 
-    // take care of explosion zone
+    // take care of explosion zone and death
     for (int i = 0 ; i < matrix.height() ; i++) {
         for (int j = 0 ; matrix.width() ; j++) {
-            if (!(matrix(i,j).gridPoint == dst_coordinates) 
-                && GridPoint::distance(matrix(i,j).gridPoint, dst_coordinates) <= attacker->getExplosiveRange()) {
-                matrix(i,j).character->takeDamage(attacker->getExplosiveDamage());
+            if (!matrix(i,j).isCellEmpty()) {
+                if (!(matrix(i,j).gridPoint == dst_coordinates) 
+                    && GridPoint::distance(matrix(i,j).gridPoint, dst_coordinates) <= attacker->getExplosiveRange()) {
+                    matrix(i,j).character->takeDamage(attacker->getExplosiveDamage());
+                }
+                if (matrix(i,j).character->isDead()) {
+                    matrix(i,j).removeCharacter();
+                }
             }
         }
     }
@@ -119,4 +123,25 @@ std::ostream& mtm::operator<<(std::ostream& os, const Game& game) {
         }
     }
     return printGameBoard(os, gameToString.c_str(), gameToString.c_str()+gameToString.length(), game.matrix.width());
+}
+
+bool Game::isOver(Team* winningTeam) const{
+    enum Team* checkOnlyGroup = NULL;
+    for (int i = 0 ; i < matrix.height() ; i++) {
+        for (int j = 0 ; matrix.width() ; j++) {
+            if(!matrix(i , j).isCellEmpty()) {
+                if(checkOnlyGroup == NULL) {
+                    *checkOnlyGroup = matrix(i , j).character-> getTeam();
+                }
+                else if(matrix(i , j).character-> getTeam() != *checkOnlyGroup) {
+                    return false;
+                }
+            }
+        }
+    }
+    if(checkOnlyGroup == NULL){
+        return false;
+    }
+    winningTeam = checkOnlyGroup;
+    return true;
 }

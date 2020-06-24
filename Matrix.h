@@ -45,21 +45,21 @@ namespace mtm {
         
         class AccessIllegalElement : public Exception {
         public:
-            std::string what();
+            const char* what() const override;
         };
         class IllegalInitialization : public Exception {
         public:
-            std::string what();
+            const char* what() const override;
         };
         class DimensionMismatch : public Exception {
             int mat1_height;
             int mat1_width;
             int mat2_height;
             int mat2_width;
-            DimensionMismatch(int mat1_height, int mat1_width, int mat2_height, int mat2_width);
+            explicit DimensionMismatch(int mat1_height, int mat1_width, int mat2_height, int mat2_width);
             friend class Matrix<T>;
         public:
-            std::string what();
+            const char* what() const override;
         };
     };
     template <class T>
@@ -360,12 +360,12 @@ namespace mtm {
     }
     
     template <class T>
-    std::string Matrix<T>::AccessIllegalElement::what() {
+    const char* Matrix<T>::AccessIllegalElement::what() const {
         return "Mtm matrix error: An attempt to access an illegal element";
     }
 
     template <class T>
-    std::string Matrix<T>::IllegalInitialization::what() {
+    const char* Matrix<T>::IllegalInitialization::what() const {
         return "Mtm matrix error: Illegal initialization values";
     }
 
@@ -376,7 +376,7 @@ namespace mtm {
     {}
 
     template <class T>
-    std::string Matrix<T>::DimensionMismatch::what() {
+    const char* Matrix<T>::DimensionMismatch::what() const {
         return "Mtm matrix error: Dimension mismatch: (" 
         + std::to_string(mat1_height) + "," + std::to_string(mat1_width) + ") ("
         + std::to_string(mat2_height) + "," + std::to_string(mat2_width) + ")";
@@ -408,7 +408,7 @@ namespace mtm {
     }
 
     template <class T>
-    std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix){
+    std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
         printMatrix(os, matrix.begin(), matrix.end(), matrix.width());
         return os;
     }
