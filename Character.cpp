@@ -3,8 +3,9 @@ using namespace mtm;
 
 Character::Character(Team team, units_t health, units_t ammo, units_t range,
     units_t power, units_t moveDistance, units_t ammoNeededForAttack, units_t reloadAmount) :
-    team(team), health(health), ammo(ammo), range(range), power(power),
-    moveDistance(moveDistance), ammoNeededForAttack(ammoNeededForAttack), reloadAmount(reloadAmount) {}
+    team(team), range(range), power(power), moveDistance(moveDistance),
+    ammoNeededForAttack(ammoNeededForAttack), reloadAmount(reloadAmount),
+    health(health), ammo(ammo) {}
 
 void Character::takeDamage(units_t damage) {
     health -= damage;

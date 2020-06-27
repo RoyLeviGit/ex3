@@ -2,6 +2,7 @@
 #define EX3_CHARACTER_H
 #include "Auxiliaries.h"
 #include <string>
+#include <memory>
 
 namespace mtm {
     class Character {

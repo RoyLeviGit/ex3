@@ -50,6 +50,7 @@ std::shared_ptr<Character> Game::makeCharacter(CharacterType type, Team team,
     default:
         break;
     }
+    return std::shared_ptr<Character>(nullptr);
 }
 
 void Game::move(const GridPoint & src_coordinates, const GridPoint & dst_coordinates) {
