@@ -2,12 +2,12 @@
 #define EX3_CELL_H
 #include "Auxiliaries.h"
 #include "Character.h"
+#include "Exceptions.h"
 #include <memory>
 #include <string>
 
 namespace mtm {
     class Cell {
-    private:
     public:
         GridPoint gridPoint;
         std::shared_ptr<Character> character;
@@ -15,10 +15,12 @@ namespace mtm {
         Cell(const Cell& other);
         ~Cell();
         bool isCellEmpty() const;
+        static void moveCharacter(Cell& src_cell, Cell& dst_cell);
         void removeCharacter();
-        std::string toString() const;
+        std::string toString() const {
+            return character == nullptr ? " " : character->toString();
+        }
     };
-    void moveChracter(Cell src_cell, Cell dst_cell);
 }
 
 #endif // EX3_CELL_H

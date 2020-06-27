@@ -11,22 +11,23 @@ namespace mtm {
         units_t power;
         units_t moveDistance;
         units_t ammoNeededForAttack;
+        units_t reloadAmount;
     protected:
         units_t health;
         units_t ammo;
         Character(Team team, units_t health, units_t ammo, units_t range,
-            units_t power, units_t moveDistance, units_t ammoNeededForAttack);
+            units_t power, units_t moveDistance, units_t ammoNeededForAttack, units_t reloadAmount);
     public:
-        virtual ~Character();
+        virtual ~Character() = default;
         virtual Character* clone() const = 0;
-        virtual void reload() = 0;
         virtual std::string toString() const = 0;
         virtual bool isTargetInRange(GridPoint src, GridPoint dst) const = 0;
         virtual void attackTarget(std::shared_ptr<Character> target) = 0;
 
-        virtual bool canAttackTarget(std::shared_ptr<Character> target) const;
+        virtual bool canAttackTarget(std::shared_ptr<Character> target, bool isSelfAttacking) const;
         virtual units_t getExplosiveRange() const;
         virtual units_t getExplosiveDamage() const;
+        void reload();
         void takeDamage(units_t damage);
         bool isDead() const;
         enum Team getTeam() const;

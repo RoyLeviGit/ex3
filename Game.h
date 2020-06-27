@@ -1,6 +1,7 @@
 #ifndef EX3_GAME_H
 #define EX3_GAME_H
 #include "Auxiliaries.h"
+#include "Exceptions.h"
 #include "Matrix.h"
 #include "Cell.h"
 #include "Character.h"
@@ -15,7 +16,7 @@ namespace mtm {
         Game(int height, int width);
         ~Game();
         Game(const Game& other);
-        Game& operator=(const Game& other);
+        Game& operator=(const Game& other) = default;
 
         void addCharacter(const GridPoint& coordinates, std::shared_ptr<Character> character);
         static std::shared_ptr<Character> makeCharacter(CharacterType type, Team team,
@@ -27,39 +28,6 @@ namespace mtm {
 
         friend std::ostream& operator<<(std::ostream& os, const Game& game);
         bool isOver(Team* winningTeam = NULL) const;
-
-        class IllegalArgument : public Exception {
-        public:
-            const char* what() const override;
-        };
-        class  IllegalCell : public Exception {
-        public:
-            const char* what() const override;
-        };
-        class  CellEmpty : public Exception {
-        public:
-            const char* what() const override;
-        };
-        class  CellOccupied : public Exception {
-        public:
-            const char* what() const override;
-        };
-        class MoveTooFar : public Exception {
-        public:    
-           const char* what() const override;
-        };
-        class OutOfRange : public Exception {
-        public:    
-           const char* what() const override;
-        };
-        class OutOfAmmo : public Exception {
-        public:    
-           const char* what() const override;
-        };
-        class IllegalTarget : public Exception {
-        public:    
-           const char* what() const override;
-        };
     };
     std::ostream& operator<<(std::ostream& os, const Game& game);
 }

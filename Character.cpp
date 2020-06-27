@@ -2,20 +2,16 @@
 using namespace mtm;
 
 Character::Character(Team team, units_t health, units_t ammo, units_t range,
-    units_t power, units_t moveDistance, units_t ammoNeededForAttack) :
+    units_t power, units_t moveDistance, units_t ammoNeededForAttack, units_t reloadAmount) :
     team(team), health(health), ammo(ammo), range(range), power(power),
-    moveDistance(moveDistance), ammoNeededForAttack(ammoNeededForAttack) {
-}
+    moveDistance(moveDistance), ammoNeededForAttack(ammoNeededForAttack), reloadAmount(reloadAmount) {}
 
 void Character::takeDamage(units_t damage) {
     health -= damage;
 }
 
 bool Character::isDead() const {
-    if(health <= 0){
-        return true;
-    }
-    return false;
+    return health <= 0;
 }
 
 enum Team Character::getTeam() const {
@@ -45,7 +41,11 @@ units_t Character::getAmmoNeededForAttack() const {
     return ammoNeededForAttack;
 }
 
-bool Character::canAttackTarget(std::shared_ptr<Character> target) const {
+void Character::reload() {
+    ammo += reloadAmount;
+}
+
+bool Character::canAttackTarget(std::shared_ptr<Character> target, bool isSelfAttacking) const {
     return true;
 }
 

@@ -20,16 +20,9 @@ void Cell::removeCharacter() {
     character = nullptr;
 }
 
-std::string Cell::toString() const {
-    if (character == nullptr) {
-        return " ";
-    }
-    return character->toString();
-}
-
-void mtm::moveChracter(Cell src_cell, Cell dst_cell) {
+void Cell::moveCharacter(Cell& src_cell, Cell& dst_cell) {
     if (src_cell.character == nullptr || dst_cell.character != nullptr) {
-        throw Exception();
+        throw GameException();
     }
     dst_cell.character = src_cell.character;
     src_cell.character = nullptr;

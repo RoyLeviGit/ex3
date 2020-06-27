@@ -1,6 +1,7 @@
 #ifndef EX3_MATRIX_H
 #define EX3_MATRIX_H
 #include "Auxiliaries.h"
+#include "Exceptions.h"
 #include <iostream>
 #include <string>
 
@@ -45,11 +46,11 @@ namespace mtm {
         
         class AccessIllegalElement : public Exception {
         public:
-            const char* what() const override;
+            const char* what() const noexcept override;
         };
         class IllegalInitialization : public Exception {
         public:
-            const char* what() const override;
+            const char* what() const noexcept override;
         };
         class DimensionMismatch : public Exception {
             int mat1_height;
@@ -59,7 +60,7 @@ namespace mtm {
             explicit DimensionMismatch(int mat1_height, int mat1_width, int mat2_height, int mat2_width);
             friend class Matrix<T>;
         public:
-            const char* what() const override;
+            const char* what() const noexcept override;
         };
     };
     template <class T>
@@ -360,12 +361,12 @@ namespace mtm {
     }
     
     template <class T>
-    const char* Matrix<T>::AccessIllegalElement::what() const {
+    const char* Matrix<T>::AccessIllegalElement::what() const noexcept {
         return "Mtm matrix error: An attempt to access an illegal element";
     }
 
     template <class T>
-    const char* Matrix<T>::IllegalInitialization::what() const {
+    const char* Matrix<T>::IllegalInitialization::what() const noexcept {
         return "Mtm matrix error: Illegal initialization values";
     }
 
@@ -376,7 +377,7 @@ namespace mtm {
     {}
 
     template <class T>
-    const char* Matrix<T>::DimensionMismatch::what() const {
+    const char* Matrix<T>::DimensionMismatch::what() const noexcept {
         return "Mtm matrix error: Dimension mismatch: (" 
         + std::to_string(mat1_height) + "," + std::to_string(mat1_width) + ") ("
         + std::to_string(mat2_height) + "," + std::to_string(mat2_width) + ")";

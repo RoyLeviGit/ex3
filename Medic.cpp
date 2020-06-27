@@ -4,14 +4,10 @@ using namespace mtm;
 
 Medic::Medic(Team team, units_t health, units_t ammo, units_t range, units_t power) :
     Character(team, health, ammo, range, power,
-    Medic::moveDistance, Medic::ammoNeededForAttack) {}
+    Medic::moveDistance, Medic::ammoNeededForAttack, Medic::reloadAmount) {}
 
 Character* Medic::clone() const {
     return new Medic(getTeam(), getHealth(), getAmmo(), getRange(), getPower());
-}
-
-void Medic::reload() {
-    ammo += reloadAmount;
 }
 
 bool Medic::isTargetInRange(GridPoint src, GridPoint dst) const {
@@ -22,5 +18,12 @@ bool Medic::isTargetInRange(GridPoint src, GridPoint dst) const {
 }
 
 void Medic::attackTarget(std::shared_ptr<Character> target) {
-    target->takeDamage(getPower());
+    if (target != nullptr) {
+        target->takeDamage(target->getTeam() == getTeam() ? -getPower() : getPower());
+    }
+    ammo -= ammoNeededForAttack;
+}
+
+bool Medic::canAttackTarget(std::shared_ptr<Character> target, bool isSelfAttacking) const {
+    return target != nullptr && !isSelfAttacking; 
 }
