@@ -6,42 +6,201 @@
 #include <string>
 
 namespace mtm {
+    /**
+     * Generic Class for matrices
+     */
     template <class T>
     class Matrix {
     private:
-        mtm::Dimensions dimensions;
-        T* data;
+        mtm::Dimensions dimensions; //dimensions of the matrix
+        T* data; //generic array to store matrix entry data.
     public:
+        /**
+         * Constructor.
+         * @note T must have default and copy constructor and opeartor =
+         * @throw IllegalInitialization if dims is not positive
+         * @throw std::bad_alloc if out of memory
+         * @param dims the deimensions of the Matrix.
+         * @param t default value for every entry of the matrix. 
+         *              Set to 0 of no other value is passed.
+         * @return new Matrix instance.
+         */
         Matrix(Dimensions dims, T t = T());
+
+        /**
+         * Copy constructor.
+         * @note T must have copy constructor and opeartor =
+         * @throw std::bad_alloc if out of memory
+         * @param matrix matrix to copy.
+         * @return new Matrix instance identical to mat.
+         */
         Matrix(const Matrix& matrix);
+
+        /**
+         * Destructor.
+         * Clean Matrix resources.
+         */
         ~Matrix();
+
+        /**
+         * @note T must have opeartor =
+         * @throw IllegalInitialization if dims is not positive
+         * @throw std::bad_alloc if out of memory
+         * @param dims size of a square matrix.
+         * @param t default value to put in diagonal entries.
+         * @return Diagonal matrix of size dim x dim, with value in the diagonal.
+         */
         static Matrix Diagonal(int dims, T t);
 
+        /**
+         * @return number of rows in a matrix
+         */
         int height() const;
+
+        /**
+         * @return number of columns in a matrix
+         */
         int width() const;
+
+        /**
+         * @return size of a matrix
+         */
         int size() const;
+
+        /**
+         * @note T must have opeartor =
+         * @return the transpose matrix of the matrix
+         * 
+         */
         Matrix transpose() const;
+
+        /**
+         * @note T must have opeartor =
+         * @throw std::bad_alloc if out of memory
+         * @param matrix to put into this matrix.
+         * @return the matrix after operation.
+         */
         Matrix& operator=(const Matrix& matrix); 
+
+        /**
+         * @note T must have opeartor +=
+         * @param matrix to add to the matrix.
+         * @return sum of the matrix and the other matrix.
+         */
         Matrix& operator+=(const Matrix& matrix);
+
+        /**
+         * @note T must have opeartor +=
+         * @param t scalar to add to the matrix.
+         * @return sum of the matrix and the scalar.
+         */
         Matrix& operator+=(T t);
+
+        /**
+         * @note T must have opeartor -
+         * @return negative matrix of the matrix.
+         */
         Matrix operator-() const;
+
+        /**
+         * @throw AccessIllegalElement if illegal row and col was sent.
+         * @param row row index of the non-const matrix.
+         * @param col ocolumn index of the non-const matrix.
+         * @return the element of the non-const matrix in the row and column index.
+         */
         T& operator()(int row, int column);
+
+        /**
+         * @throw AccessIllegalElement if illegal row and col was sent.
+         * @param row row index of the const matrix.
+         * @param col ocolumn index of the const matrix.
+         * @return the element of the const matrix in the row and column index.
+         */
         const T& operator()(int row, int column) const;
+
+        /**
+         * @note T must have opeartor !=
+         * @param t number to compare with matrix entries.
+         * @return Matrix the same size as the matrix with 1 at the entries that
+         * not equal to num, and 0 for the entry that doesn't.
+         */
         Matrix<bool> operator!=(T t) const;
+
+        /**
+         * @note T must have opeartor !=
+         * @param t object to compare with matrix entries.
+         * @return Matrix the same size as the matrix with 1 at the entries that
+         * equal to num, and 0 for the entry that doesn't.
+         */
         Matrix<bool> operator==(T t) const;
+
+        /**
+         * @note T must have opeartor <
+         * @param t object to compare with matrix entries.
+         * @return Matrix the same size as the matrix with 1 at the entries that smaller
+         * than num, and 0 for the entry that doesn't.
+         */
         Matrix<bool> operator<(T t) const;
+
+        /**
+         * @note T must have opeartor >
+         * @param t object to compare with matrix entries.
+         * @return Matrix the same size as the matrix with 1 at the entries that bigger
+         * than num, and 0 for the entry that doesn't.
+         */
         Matrix<bool> operator>(T t) const;
+
+        /**
+         * @note T must have opeartor > and oprator 
+         * @param t object to compare with matrix entries.
+         * @return Matrix the same size as the matrix with 1 at the entries that
+         * smaller or equal to num, and 0 for the entry that doesn't.
+         */
         Matrix<bool> operator<=(T t) const;
+
+        /**
+         * @note T must have opeartor <
+         * @param t object to compare with matrix entries.
+         * @return Matrix the same size as the matrix with 1 at the entries that
+         * bigger or equal to num, and 0 for the entry that doesn't.
+         */
         Matrix<bool> operator>=(T t) const;
+
+        /**
+         * @tparam ApplyFunction class with opeartor ()
+         * @note T must have opeartor =
+         * @param toApply function to apply on each entry of the matrix
+         * @return new matrix with entries applyed by func
+         */
         template <class ToApply>
         Matrix apply(ToApply toApply) const;
 
         class iterator;
+
+        /**
+         * @return iterator instance for a non-const matrix, 
+         * pointing to the beginning of the matrix.
+         */
         iterator begin();
+
+        /**
+         * @return iterator instance for a non-const matrix, 
+         * pointing to the end of the matrix.
+         */
         iterator end();
 
         class const_iterator;
+
+        /**
+         * @return iterator instance for a const matrix, 
+         * pointing to the beginning of the matrix.
+         */
         const_iterator begin() const;
+
+        /**
+         * @return iterator instance for a const matrix, 
+         * pointing to the end of the matrix.
+         */
         const_iterator end() const;
         
         class AccessIllegalElement : public Exception {
@@ -53,66 +212,205 @@ namespace mtm {
             IllegalInitialization() : Exception("Mtm matrix error: Illegal initialization values") {}
         };
         class DimensionMismatch : public Exception {
+        public:
             explicit DimensionMismatch(int mat1_height, int mat1_width, int mat2_height, int mat2_width) :
                 Exception("Mtm matrix error: Dimension mismatch: (" 
                 + std::to_string(mat1_height) + "," + std::to_string(mat1_width) + ") ("
                 + std::to_string(mat2_height) + "," + std::to_string(mat2_width) + ")") {}
         };
     };
+
+    /**
+    * Symmetry definition
+    * @note T must have opeartor +=
+    * @throw DimensionMismatch if dims of the 2 matrices aren't equal.
+    * @param matrixA matrix to add.
+    * @param matrixB second matrix to add.
+    * @return sum of these 2 matrices.
+    */
     template <class T>
     Matrix<T> operator+(const Matrix<T> matrixA , const Matrix<T> matrixB);
+
+    /**
+     * Symmetry definition
+     * @note T must have opeartor +=
+     * @param t number to add to all the matrix elements.
+     * @param matrix matrix to add the scalar to.
+     * @return sum of the scalar to all matrix elements.
+     */
     template <class T>
     Matrix<T> operator+(T t , const Matrix<T> matrix);
+
+    /**
+     * Symmetry definition
+     * @note T must have opeartor +=
+     * @param matrix matrix to add the scalar to.
+     * @param t number to add to all the matrix elements.
+     * @return sum of the scalar to all matrix elements.
+     */
     template <class T>
     Matrix<T> operator+(const Matrix<T> matrix, T t);
+
+    /**
+     * Symmetry definition
+     * @note T must have opeartors - and +=
+     * @throw DimensionMismatch if dims of the 2 matrices aren't equal.
+     * @param matrixA matrix to add.
+     * @param matrixB matrix to add.
+     * @return subtraction of these 2 matrices.
+     */
     template <class T>
     Matrix<T> operator-(const Matrix<T> matrixA , const Matrix<T> matrixB);
+    
+    /**
+     * @note T must have opeartor <<
+     * @param os output stream.
+     * @param matrix matrix to print.
+     * @return print the matrix.
+     */
     template <class T>
     std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix);
+
+    /**
+     * @return True if every entry of the matrix is different than false,
+     * False otherwise.
+     */
     template <class T>
     bool all(const Matrix<T> matrix);
+
+     /**
+     * @return True if one entry of the matrix is different than false,
+     * False otherwise.
+     */
     template <class T>
     bool any(const Matrix<T> matrix);
 
-
+    /**
+    * Iterator Class for iterating non-const matrices
+    */
     template <class T>
     class Matrix<T>::iterator {
         private:
-            Matrix<T>* matrix;
-            int index;
+            Matrix<T>* matrix; //pointer to the matrix instance.
+            int index; //current index of iteration.
+
+            /**
+             * Constructor.
+             * @param matrix pointer to the const matrix to iterate.
+             * @param index starting index of iterating.
+             * @return new iterator instance for a certain const matrix.
+             */
             iterator(Matrix<T>* matrix, int index);
             friend class Matrix<T>;
         public:
+
+            /**
+             * Default Copy constructor.
+             * Created by the compiler
+             */
             iterator(const iterator&) = default;
+
+            /**
+             * Default = opeartor.
+             * Created by the compiler
+             */
             iterator& operator=(const iterator&) = default;
+
+            /**
+             * @return refreance to the current entry of the matrix in the iteration. 
+             */
             T& operator*() const;
+            
+            /** 
+             * Advance the index by 1.
+             * @return refreance to the iterator with advanced index. 
+             */
             iterator& operator++();
+
+            /**
+             * Advance the index by 1.
+             * @return Instance of the iterator with the previous index. 
+             */
             iterator operator++(int);
+
+            /**
+             * @param it iterator to compare with this iterator.
+             * @return true if the iterators are of the same matrix and point to the same index,
+             * false otherwise.
+             */
             bool operator==(const iterator& it) const;
+
+            /**
+             * @param it iterator to compare with this iterator.
+             * @return true if the iterators are of the same matrix and point to different index,
+             * false otherwise.
+             */
             bool operator!=(const iterator& it) const;
     };
 
+    /**
+    * Iterator Class for iterating const matrices
+    */
     template <class T>
     class Matrix<T>::const_iterator {
         private:
-            const Matrix<T>* matrix;
-            int index;
+            const Matrix<T>* matrix; //pointer to the const matrix instance.
+            int index; //current index of iteration.
+
+            /**
+             * Constructor.
+             * @param matrix pointer to the const matrix to iterate.
+             * @param index starting index of iterating.
+             * @return new iterator instance for a certain const matrix.
+             */
             const_iterator(const Matrix<T>* matrix, int index);
             friend class Matrix<T>;
         public:
+
+            /**
+             * Default Copy constructor.
+             * Created by the compiler
+             */
             const_iterator(const const_iterator&) = default;
+
+            /**
+             * Default = opeartor.
+             * Created by the compiler
+             */
             const_iterator& operator=(const const_iterator&) = default;
+
+            /**
+             * @return const refreance to the current entry of the matrix in the iteration. 
+             */
             const T& operator*() const;
+
+            /** 
+             * Advance the index by 1.
+             * @return refreance to the iterator with advanced index. 
+             */
             const_iterator& operator++();
+
+            /**
+             * Advance the index by 1.
+             * @return Instance of the iterator with the previous index. 
+             */
             const_iterator operator++(int);
+
+            /**
+             * @param it iterator to compare with this iterator.
+             * @return true if the iterators are of the same matrix and point to the same index,
+             * false otherwise.
+             */
             bool operator==(const const_iterator& it) const;
+
+            /**
+             * @param it iterator to compare with this iterator.
+             * @return true if the iterators are of the same matrix and point to different index,
+             * false otherwise.
+             */
             bool operator!=(const const_iterator& it) const;        
     };
 
-    // Assumptions:
-    // T has default construtor
-    // T has copy construtor
-    // T has assignment operator
     template <class T>
     Matrix<T>::Matrix(Dimensions dims, T t) : 
         dimensions(dims.getRow(), dims.getCol()) {
@@ -127,9 +425,6 @@ namespace mtm {
         }
     }
 
-    // Assumptions:
-    // T has default construtor
-    // T has assignment operator
     template <class T>
     Matrix<T>::Matrix(const Matrix& matrix) : 
         dimensions(matrix.dimensions.getRow(), matrix.dimensions.getCol()),
@@ -138,16 +433,12 @@ namespace mtm {
             data[i] = matrix.data[i];
         }
     }
-    // Assumptions:
-    // T has destructor 
+
     template <class T>
     Matrix<T>::~Matrix() {
         delete[] data;
     }
 
-    // Assumptions:
-    // T has copy construtor
-    // T has assignment operator
     template <class T>
     Matrix<T> Matrix<T>::Diagonal(int dims, T t) {
         // error checking
@@ -177,8 +468,6 @@ namespace mtm {
         return height() * width();
     }
 
-    // Assumptions:
-    // T has assignment operator
     template <class T>
     Matrix<T> Matrix<T>::transpose() const {
         Dimensions transposedDimensions = Dimensions(dimensions.getCol(), dimensions.getRow());
@@ -192,8 +481,6 @@ namespace mtm {
         return transposed;
     }
 
-    // Assumptions:
-    // T has assignment operator
     template <class T>
     Matrix<T>& Matrix<T>::operator=(const Matrix<T>& matrix) {
         T *temp = new T[matrix.dimensions.getRow() * matrix.dimensions.getCol()];
@@ -206,8 +493,6 @@ namespace mtm {
         return *this;
     }
 
-    // Assumptions:
-    // T has += operator
     template <class T>
     Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& matrix) {
         // error checking
@@ -221,8 +506,6 @@ namespace mtm {
         return *this;
     }
 
-    // Assumptions:
-    // T has += operator
     template <class T>
     Matrix<T>& Matrix<T>::operator+=(T t){
         for (int i = 0; i < size() ; i++) {
@@ -231,8 +514,6 @@ namespace mtm {
         return *this;  
     }
 
-    // Assumptions:
-    // T has unary - operator
     template <class T>
     Matrix<T> Matrix<T>::operator-() const {
         Matrix<T> minusMatrix(*this);
@@ -262,8 +543,6 @@ namespace mtm {
         return data[(row * width()) + column];
     }
     
-    // Assumptions:
-    // T has != operator
     template <class T>
     Matrix<bool> Matrix<T>::operator!=(T t) const {
         Matrix<bool> diffMatrix(dimensions, false);
@@ -286,8 +565,6 @@ namespace mtm {
         return equMatrix;
     }
     
-    // Assumptions:
-    // T has < operator
     template <class T>
     Matrix<bool> Matrix<T>::operator<(T t) const {
         Matrix<bool> smallMatrix(dimensions, false);
@@ -301,8 +578,6 @@ namespace mtm {
         return smallMatrix;
     }
 
-    // Assumptions:
-    // T has > operator
     template <class T>
     Matrix<bool> Matrix<T>::operator>(T t) const{
         Matrix<bool> bigMatrix(dimensions, false);
@@ -386,8 +661,6 @@ namespace mtm {
         return os;
     }
     
-    // Assumptions:
-    // T has static cast to bool
     template <class T>
     bool all(const Matrix<T> matrix) {
         for (T t : matrix) {
@@ -398,8 +671,6 @@ namespace mtm {
         return true;
     }
 
-    // Assumptions:
-    // T has static cast to bool
     template <class T>
     bool any(const Matrix<T> matrix) {
         for (T t : matrix) {
@@ -490,9 +761,6 @@ namespace mtm {
         return !(*this == it);
     }
 
-
-    // Assumptions:
-    // T has assignment operator
     template <class T>
     template <class ToApply>
     Matrix<T> Matrix<T>::apply(ToApply toApply) const {
