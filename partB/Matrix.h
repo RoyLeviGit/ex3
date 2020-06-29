@@ -46,21 +46,17 @@ namespace mtm {
         
         class AccessIllegalElement : public Exception {
         public:
-            const char* what() const noexcept override;
+            AccessIllegalElement() : Exception("Mtm matrix error: An attempt to access an illegal element") {}
         };
         class IllegalInitialization : public Exception {
         public:
-            const char* what() const noexcept override;
+            IllegalInitialization() : Exception("Mtm matrix error: Illegal initialization values") {}
         };
         class DimensionMismatch : public Exception {
-            int mat1_height;
-            int mat1_width;
-            int mat2_height;
-            int mat2_width;
-            explicit DimensionMismatch(int mat1_height, int mat1_width, int mat2_height, int mat2_width);
-            friend class Matrix<T>;
-        public:
-            const char* what() const noexcept override;
+            explicit DimensionMismatch(int mat1_height, int mat1_width, int mat2_height, int mat2_width) :
+                Exception("Mtm matrix error: Dimension mismatch: (" 
+                + std::to_string(mat1_height) + "," + std::to_string(mat1_width) + ") ("
+                + std::to_string(mat2_height) + "," + std::to_string(mat2_width) + ")") {}
         };
     };
     template <class T>
@@ -200,14 +196,12 @@ namespace mtm {
     // T has assignment operator
     template <class T>
     Matrix<T>& Matrix<T>::operator=(const Matrix<T>& matrix) {
-        // error checking
-        if (dimensions != matrix.dimensions) {
-            throw DimensionMismatch(height(), width(), matrix.height(), matrix.width());
+        T *temp = new T[matrix.dimensions.getRow() * matrix.dimensions.getCol()];
+        for (int i = 0 ; i < matrix.size() ; i++) {
+            temp[i] = matrix.data[i];
         }
-
-        for (int i = 0 ; i < size() ; i++) {
-            data[i] = matrix.data[i];
-        }
+        delete[] data;
+        data = temp;
         dimensions = Dimensions(matrix.dimensions.getRow(),matrix.dimensions.getCol());
         return *this;
     }
@@ -251,7 +245,7 @@ namespace mtm {
     template <class T>
     T& Matrix<T>::operator()(int row, int column) {
         // error checking
-        if (row >= height() || column >= width()) {
+        if (row < 0 || column < 0 ||row >= height() || column >= width()) {
             throw AccessIllegalElement();
         }
 
@@ -261,7 +255,7 @@ namespace mtm {
     template <class T>
     const T& Matrix<T>::operator()(int row, int column) const {
         // error checking
-        if (row >= height() || column >= width()) {
+        if (row < 0 || column < 0 ||row >= height() || column >= width()) {
             throw AccessIllegalElement();
         }
 
@@ -361,29 +355,6 @@ namespace mtm {
     }
     
     template <class T>
-    const char* Matrix<T>::AccessIllegalElement::what() const noexcept {
-        return "Mtm matrix error: An attempt to access an illegal element";
-    }
-
-    template <class T>
-    const char* Matrix<T>::IllegalInitialization::what() const noexcept {
-        return "Mtm matrix error: Illegal initialization values";
-    }
-
-    template <class T>
-    Matrix<T>::DimensionMismatch::DimensionMismatch(int mat1_height, int mat1_width, int mat2_height, int mat2_width) :
-        mat1_height(mat1_height), mat1_width(mat1_width),
-        mat2_height(mat2_height), mat2_width(mat2_width)
-    {}
-
-    template <class T>
-    const char* Matrix<T>::DimensionMismatch::what() const noexcept {
-        return "Mtm matrix error: Dimension mismatch: (" 
-        + std::to_string(mat1_height) + "," + std::to_string(mat1_width) + ") ("
-        + std::to_string(mat2_height) + "," + std::to_string(mat2_width) + ")";
-    }
-    
-    template <class T>
     Matrix<T> operator+(Matrix<T> MatrixA , Matrix<T> MatrixB) {
         Matrix<T> newMatrix = MatrixA;
         newMatrix += MatrixB;
@@ -392,13 +363,14 @@ namespace mtm {
     
     template <class T>
     Matrix<T> operator+(T t , const Matrix<T> matrix) {
-        Matrix<T> plusMatrix(matrix);
-        return plusMatrix += t;    
+        Matrix<T> plusMatrix(Dimensions(matrix.height(), matrix.width()), t);
+        return plusMatrix += matrix;  
     }
 
     template <class T>
-    Matrix<T> operator+(const Matrix<T> Matrix, T t) {
-        return t + Matrix;
+    Matrix<T> operator+(const Matrix<T> matrix, T t) {
+        Matrix<T> plusMatrix(matrix);
+        return plusMatrix += t;
     }
 
     template <class T>
@@ -448,7 +420,7 @@ namespace mtm {
     template <class T>
     T& Matrix<T>::iterator::operator*() const {
         // error checking
-        if (index >= matrix->size()) {
+        if (index < 0 || index >= matrix->size()) {
             throw AccessIllegalElement();
         }
         
@@ -488,7 +460,7 @@ namespace mtm {
     template <class T>
     const T& Matrix<T>::const_iterator::operator*() const {
         // error checking
-        if (index >= matrix->size()) {
+        if (index < 0 || index >= matrix->size()) {
             throw AccessIllegalElement();
         }
         

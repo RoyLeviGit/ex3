@@ -55,9 +55,12 @@ IntMatrix IntMatrix::transpose() const {
 }
 
 IntMatrix& IntMatrix::operator=(const IntMatrix& intMatrix) {
-    for (int i = 0 ; i < size() ; i++) {
-       data[i] = intMatrix.data[i];
+    int* temp = new int[intMatrix.dimensions.getRow() * intMatrix.dimensions.getCol()];
+    for (int i = 0 ; i < intMatrix.size() ; i++) {
+        temp[i] = intMatrix.data[i];
     }
+    delete[] data;
+    data = temp;
     dimensions = Dimensions(intMatrix.dimensions.getRow(),intMatrix.dimensions.getCol());
     return *this;
 }
@@ -183,7 +186,7 @@ std::ostream& mtm::operator<<(std::ostream& os, const IntMatrix& intMatrix) {
 }
 
 bool mtm::all(const IntMatrix intMatrix) {
-    IntMatrix comparisonMatrix = (intMatrix != 0);
+    IntMatrix comparisonMatrix = (intMatrix == 0);
     for (int element : comparisonMatrix) {
         if (element == 1) {
             return false;
