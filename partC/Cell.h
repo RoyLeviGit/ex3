@@ -13,6 +13,7 @@ namespace mtm {
         std::shared_ptr<Character> character;
         Cell();
         Cell(const Cell& other);
+        Cell& operator=(const Cell& other);
         ~Cell();
         bool isCellEmpty() const;
         static void moveCharacter(Cell& src_cell, Cell& dst_cell);

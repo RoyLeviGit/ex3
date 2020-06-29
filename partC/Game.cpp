@@ -12,7 +12,11 @@ bool Game::isGridPointInBounds(GridPoint gridPoint) {
         && gridPoint.col >=0 && gridPoint.col < matrix.width());
 }
 
-Game::Game(int height, int width): matrix(Dimensions(height,width)) {
+Game::Game(int height, int width) : matrix(Dimensions(1,1)) {
+    if (height <= 0 || width <= 0) {
+        throw IllegalArgument();
+    }
+    matrix = Matrix<Cell>(Dimensions(height, width));
     for (int i = 0 ; i < matrix.height() ; i++) {
         for (int j = 0 ; j < matrix.width() ; j++) {
             matrix(i,j).gridPoint = GridPoint(i, j);
@@ -86,7 +90,7 @@ void Game::attack(const GridPoint & src_coordinates, const GridPoint & dst_coord
         throw OutOfAmmo();
     }
     if(!attacker->canAttackTarget(matrix(dst_coordinates.row, dst_coordinates.col).character,
-        src_coordinates == dst_coordinates)){
+        src_coordinates, dst_coordinates)) {
         throw IllegalTarget();
     }
     attacker->attackTarget(matrix(dst_coordinates.row, dst_coordinates.col).character);
@@ -96,7 +100,8 @@ void Game::attack(const GridPoint & src_coordinates, const GridPoint & dst_coord
         for (int j = 0 ; j < matrix.width() ; j++) {
             if (!matrix(i,j).isCellEmpty()) {
                 if (!(matrix(i,j).gridPoint == dst_coordinates) 
-                    && GridPoint::distance(matrix(i,j).gridPoint, dst_coordinates) <= attacker->getExplosiveRange()) {
+                    && GridPoint::distance(matrix(i,j).gridPoint, dst_coordinates) <= attacker->getExplosiveRange()
+                    && matrix(i,j).character->getTeam() != attacker->getTeam()) {
                     Cell& cell = matrix(i,j);
                     cell.character->takeDamage(attacker->getExplosiveDamage());
                 }

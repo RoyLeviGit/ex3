@@ -10,6 +10,14 @@ Cell::Cell(const Cell& other) : gridPoint(other.gridPoint) {
     }
 }
 
+Cell& Cell::operator=(const Cell& other) {
+    gridPoint = other.gridPoint;
+    if (!other.isCellEmpty()) {
+        character = std::shared_ptr<Character>(other.character->clone());
+    }
+    return *this;
+}
+
 Cell::~Cell() {}
 
 bool Cell::isCellEmpty() const {

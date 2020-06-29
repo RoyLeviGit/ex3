@@ -7,15 +7,19 @@ Soldier::Soldier(Team team, units_t health, units_t ammo, units_t range, units_t
     Soldier::moveDistance, Soldier::ammoNeededForAttack, Soldier::reloadAmount) {}
 
 Character* Soldier::clone() const {
-    return new Soldier(getTeam(), getHealth(), getAmmo(), getRange(), getPower());
+    return new Soldier(*this);
 }
 
 bool Soldier::isTargetInRange(GridPoint src, GridPoint dst) const {
-    return GridPoint::distance(src , dst) <= getRange() && (src.row == dst.row ||src.col == dst.col);
+    return GridPoint::distance(src , dst) <= getRange();
+}
+
+bool Soldier::canAttackTarget(std::shared_ptr<Character> target, GridPoint src_coordinates, GridPoint dst_coordinates) const {
+    return src_coordinates.row == dst_coordinates.row || src_coordinates.col == dst_coordinates.col;
 }
 
 void Soldier::attackTarget(std::shared_ptr<Character> target) {
-    if (target != nullptr) {
+    if (target != nullptr && getTeam() != target->getTeam()) {
         target->takeDamage(getPower());
     }
     ammo -= ammoNeededForAttack;

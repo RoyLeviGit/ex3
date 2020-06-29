@@ -11,13 +11,13 @@ Character* Sniper::clone() const {
 }
 
 bool Sniper::isTargetInRange(GridPoint src, GridPoint dst) const {
-    if(GridPoint::distance(src , dst) <= getRange() &&GridPoint::distance(src , dst) >= std::ceil(getRange()/2)){
+    if(GridPoint::distance(src, dst) <= getRange() && GridPoint::distance(src, dst) >= std::ceil(double(getRange())/2)){
         return true;
     }
     return false;
 }
 
-bool Sniper::canAttackTarget(std::shared_ptr<Character> target, bool isSelfAttacking) const {
+bool Sniper::canAttackTarget(std::shared_ptr<Character> target, GridPoint src_coordinates, GridPoint dst_coordinates) const {
     return target != nullptr && target->getTeam() != getTeam();
 }
 

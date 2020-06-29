@@ -46,10 +46,6 @@ void Character::reload() {
     ammo += reloadAmount;
 }
 
-bool Character::canAttackTarget(std::shared_ptr<Character> target, bool isSelfAttacking) const {
-    return true;
-}
-
 units_t Character::getExplosiveRange() const {
     return 0;
 }

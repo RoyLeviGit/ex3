@@ -13,7 +13,7 @@ namespace mtm {
         Character* clone() const override;
         bool isTargetInRange(GridPoint src, GridPoint dst) const override;
         void attackTarget(std::shared_ptr<Character> target) override;
-        bool canAttackTarget(std::shared_ptr<Character> target ,bool isSelfAttacking) const override;
+        bool canAttackTarget(std::shared_ptr<Character> target, GridPoint src_coordinates, GridPoint dst_coordinates) const override;
         std::string toString() const override {
             return getTeam() == CPP ? "M" : "m";
         }

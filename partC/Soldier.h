@@ -12,6 +12,7 @@ namespace mtm {
         Soldier(Team team, units_t health, units_t ammo, units_t range, units_t power);
         Character* clone() const override;
         bool isTargetInRange(GridPoint src, GridPoint dst) const override;
+        bool canAttackTarget(std::shared_ptr<Character> target, GridPoint src_coordinates, GridPoint dst_coordinates) const override;
         void attackTarget(std::shared_ptr<Character> target) override;
         units_t getExplosiveRange() const override;
         units_t getExplosiveDamage() const override;

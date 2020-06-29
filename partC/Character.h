@@ -24,8 +24,9 @@ namespace mtm {
         virtual std::string toString() const = 0;
         virtual bool isTargetInRange(GridPoint src, GridPoint dst) const = 0;
         virtual void attackTarget(std::shared_ptr<Character> target) = 0;
-
-        virtual bool canAttackTarget(std::shared_ptr<Character> target, bool isSelfAttacking) const;
+        virtual bool canAttackTarget(std::shared_ptr<Character> target,
+            GridPoint src_coordinates, GridPoint dst_coordinates) const = 0;
+        
         virtual units_t getExplosiveRange() const;
         virtual units_t getExplosiveDamage() const;
         void reload();
