@@ -129,7 +129,7 @@ namespace mtm {
         /**
          * @return the ammoNeededForAttack of the character.
          */
-        units_t get() const;
+        units_t getAmmoNeededForAttack() const;
     };
 }
 
